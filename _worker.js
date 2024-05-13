@@ -1,7 +1,7 @@
 
 // 部署完成后在网址后面加上这个，获取订阅器默认节点，/auto
 
-let mytoken= ['auto'];//快速订阅访问入口, 留空则不启动快速订阅
+let mytoken= ['sub'];//快速订阅访问入口, 留空则不启动快速订阅
 
 // 设置优选地址，不带端口号默认443，TLS订阅生成
 let addresses = [
@@ -236,7 +236,7 @@ export default {
 		const url = new URL(request.url);
 		const format = url.searchParams.get('format') ? url.searchParams.get('format').toLowerCase() : "null";
 		let host = "";
-		let pw = "";
+		let password = "";
 		//let uuid = "";
 		let path = "";
 		let sni = "";
@@ -272,17 +272,17 @@ export default {
 				const hosts = await ADD(env.HOST);
 				host = hosts[Math.floor(Math.random() * hosts.length)];
 			}
-			pw = env.PASSWORD || "null";
+			password = env.PASSWORD || "null";
 			path = env.PATH || "/?ed=2560";
 			sni = env.SNI || host;
 			epeius = env.ED || epeius;
 			RproxyIP = env.RPROXYIP || RproxyIP;
 
-			if (host == "null" || pw == "null" ){
+			if (host == "null" || password == "null" ){
 				let 空字段;
-				if (host == "null" && pw == "null") 空字段 = "HOST/PASSWORD";
+				if (host == "null" && password == "null") 空字段 = "HOST/PASSWORD";
 				else if (host == "null") 空字段 = "HOST";
-				else if (pw == "null") 空字段 = "PASSWORD";
+				else if (password == "null") 空字段 = "PASSWORD";
 				EndPS += ` 订阅器内置节点 ${空字段} 未设置！！！`;
 			}
 
@@ -306,7 +306,7 @@ export default {
 		await sendMessage("#Trojan订阅", request.headers.get('CF-Connecting-IP'), `UA: ${userAgentHeader}</tg-spoiler>\n域名: ${url.hostname}\n<tg-spoiler>入口: ${url.pathname + url.search}</tg-spoiler>`);
 		} else {
 			host = url.searchParams.get('host');
-			pw = url.searchParams.get('pw') || url.searchParams.get('password');
+			password = url.searchParams.get('password') || url.searchParams.get('password');
 			path = url.searchParams.get('path');
 			sni = url.searchParams.get('sni') || host;
 			epeius = url.searchParams.get('epeius') || epeius;
@@ -327,21 +327,18 @@ export default {
 				});
 			}
 			
-			if (!host || !pw) {
+			if (!host || !password) {
 				const responseText = `
-			缺少必填参数：host 和 pw
-			Missing required parameters: host and uuid
-			پارامترهای ضروری وارد نشده: هاست و یوآی‌دی
+			缺少必填参数：host 和 uuid(password)
+			Missing required parameters: host and uuid(password)
 			
-			${url.origin}/sub?host=[your host]&pw=[your password]&path=[your path]
-			
+			${url.origin}/sub?host=[your host]&password=[your password]&path=[your path]
 			
 			
 			
 			
 			
-				
-				https://github.com/cmliu/WorkerTrojan2sub
+		
 				`;
 			
 				return new Response(responseText, {
@@ -471,9 +468,9 @@ export default {
 					sni = 伪装域名;
 				}
 
-				let 密码 = pw;
+				let 密码 = password;
 				if (!userAgent.includes('subconverter')){
-					密码 = encodeURIComponent(pw);
+					密码 = encodeURIComponent(password);
 				}
 				const trojanLink = `trojan://${密码}@${address}:${port}?security=tls&sni=${sni}&fp=randomized&type=ws&host=${伪装域名}&path=${encodeURIComponent(最终路径)}#${encodeURIComponent(addressid + 节点备注)}`;
 
